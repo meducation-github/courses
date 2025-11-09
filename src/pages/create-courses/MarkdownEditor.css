@@ -1,0 +1,159 @@
+/* Markdown Editor Styles */
+.markdown-editor {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.markdown-editor textarea {
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas,
+    "Courier New", monospace;
+  line-height: 1.6;
+}
+
+.markdown-editor textarea:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Toolbar button hover effects */
+.markdown-editor .toolbar-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.markdown-editor .toolbar-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.markdown-editor .toolbar-button:hover::before {
+  left: 100%;
+}
+
+/* Keyboard shortcut styling */
+.markdown-editor kbd {
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas,
+    "Courier New", monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Preview mode styling */
+.markdown-editor .preview-content {
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Smooth transitions */
+.markdown-editor * {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Focus states */
+.markdown-editor button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Active state for toolbar buttons */
+.markdown-editor .toolbar-button.active {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.markdown-editor .toolbar-button.active:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .markdown-editor .toolbar {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .markdown-editor .toolbar-button {
+    padding: 0.5rem;
+  }
+
+  .markdown-editor .toolbar-separator {
+    display: none;
+  }
+}
+
+/* Custom scrollbar for preview */
+.markdown-editor .preview-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.markdown-editor .preview-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.markdown-editor .preview-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.markdown-editor .preview-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animation for mode switching */
+.markdown-editor .editor-content {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Placeholder styling */
+.markdown-editor textarea::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Selection styling */
+.markdown-editor textarea::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Character count styling */
+.markdown-editor .char-count {
+  font-weight: 500;
+}
+
+.markdown-editor .char-count.warning {
+  color: #f59e0b;
+}
+
+.markdown-editor .char-count.danger {
+  color: #ef4444;
+}
+

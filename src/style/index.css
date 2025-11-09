@@ -1,0 +1,89 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+* {
+  font-family: "Noto Sans", sans-serif;
+  /* font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important; */
+  text-decoration: none;
+}
+
+/* masonary */
+
+.masonry-grid {
+  width: 100%;
+}
+
+.masonry-grid-count-1 {
+  column-count: 1;
+}
+
+.masonry-grid-count-2 {
+  column-count: 2;
+}
+
+.masonry-grid-count-3 {
+  column-count: 3;
+}
+
+.masonry-grid-count-4 {
+  column-count: 4;
+}
+
+.masonry-grid-count-5 {
+  column-count: 5;
+}
+
+.masonry-grid__item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  margin: 0px 5px;
+  padding: 5px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: white;
+  border: none;
+  position: relative;
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  .masonry-grid {
+    padding: 10px;
+    column-count: 1;
+  }
+  .masonry-grid-count-3 {
+    column-count: 1;
+  }
+
+  .masonry-grid-count-4 {
+    column-count: 1;
+  }
+  .masonry-grid-count-5 {
+    column-count: 1;
+  }
+}
+
+@media (max-width: 992px) AND (min-width: 768px) {
+  .masonry-grid {
+    padding: 10px;
+  }
+  .masonry-grid-count-3 {
+    column-count: 2;
+  }
+  .masonry-grid-count-4 {
+    column-count: 2;
+  }
+  .masonry-grid-count-5 {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 1200px) AND (min-width: 992px) {
+  .masonry-grid-count-4 {
+    column-count: 3;
+  }
+  .masonry-grid-count-5 {
+    column-count: 4;
+  }
+}
