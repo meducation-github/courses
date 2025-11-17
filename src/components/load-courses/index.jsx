@@ -47,7 +47,7 @@ const LoadCourses = ({ onClose, onSuccess }) => {
       // Fetch courses from admin database
       const supabaseAdmin = await getSupabaseAdmin();
       const { data: adminCourses, error: adminError } = await supabaseAdmin
-        .from("subjects_courses")
+        .from("courses")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -57,7 +57,7 @@ const LoadCourses = ({ onClose, onSuccess }) => {
 
       // Fetch courses from institute database to check which ones are already loaded
       const { data: instituteCourses, error: instituteError } = await supabase
-        .from("subjects_courses")
+        .from("courses")
         .select("name, description, grade_id, board")
         .eq("institute_id", INSTITUTE_ID);
 
@@ -155,7 +155,7 @@ const LoadCourses = ({ onClose, onSuccess }) => {
 
         // 1. Create course in institute database
         const { data: newCourse, error: courseError } = await supabase
-          .from("subjects_courses")
+          .from("courses")
           .insert([
             {
               name: course.name,
