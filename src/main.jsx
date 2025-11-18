@@ -3,15 +3,21 @@ import { createRoot } from "react-dom/client";
 import "./style/index.css";
 import App from "./App.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { ContextProvider } from "./context/index.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Courses from "./pages/courses/index.jsx";
 import CreateCourses from "./pages/create-courses/index.jsx";
+import Login from "./pages/auth/Login.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <ContextProvider>
+      <Toaster position="top-center" />
       <Routes>
+        {/* Public login route */}
+        <Route path="/login" element={<Login />} />
+
         <Route path="/" element={<App />}>
           {/* Staff-only routes for creating courses */}
           <Route

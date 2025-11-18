@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__list_tables",
+      "Bash(npm run dev:*)",
+      "mcp__linear__list_issues",
+      "mcp__linear__update_issue",
+      "mcp__linear__create_comment",
+      "mcp__linear__get_issue",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest add button input card label --yes)",
+      "Bash(npm run build:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}

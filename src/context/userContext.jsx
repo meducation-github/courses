@@ -34,10 +34,6 @@ export const UserProvider = ({ children }) => {
     console.log("User state cleared");
   };
 
-  const redirectToLogin = () => {
-    window.location.href = "https://meducation.pk/login";
-  };
-
   const isStudent = () => userRole === "student";
   const isStaff = () => userRole === "staff";
   const canCreateCourses = () => userRole === "staff";
@@ -51,10 +47,10 @@ export const UserProvider = ({ children }) => {
         userRole,
         login,
         logout,
-        redirectToLogin,
         isStudent,
         isStaff,
         canCreateCourses,
+        setUser,
         setUserProfile,
         setInstitute,
         setUserRole,

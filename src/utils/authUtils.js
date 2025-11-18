@@ -1,13 +1,18 @@
 // Utility functions for authentication and redirects
 
 export const getRedirectUrl = (userRole, currentPath = "") => {
-  // Always redirect to meducation.pk/login
-  return "https://meducation.pk/login";
+  // Redirect to local login page, with fallback to external login
+  return "/login";
 };
 
 export const redirectToLogin = (userRole = null, currentPath = "") => {
   const redirectUrl = getRedirectUrl(userRole, currentPath);
   window.location.href = redirectUrl;
+};
+
+export const redirectToExternalLogin = () => {
+  // For users who want to login via the main MEducation portal
+  window.location.href = "https://meducation.pk/login";
 };
 
 export const isAccessTokenInUrl = () => {
