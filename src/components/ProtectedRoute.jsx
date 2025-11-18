@@ -20,9 +20,9 @@ const ProtectedRoute = ({
     );
   }
 
-  // If user is not authenticated, return null (App component will handle redirect)
+  // If user is not authenticated, redirect to login
   if (!user) {
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   // If specific role is required and user doesn't have it
