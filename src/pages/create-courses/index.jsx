@@ -39,6 +39,7 @@ import { CSS } from "@dnd-kit/utilities";
 import MarkdownRenderer from "./MarkdownRenderer";
 import SimpleRichTextEditor from "./SimpleRichTextEditor";
 import LoadCourses from "../../components/load-courses";
+import { Button } from "../../components/ui/button";
 
 // Pakistan school boards data
 const pakistanBoards = [
@@ -127,6 +128,8 @@ const CreateCourses = () => {
   const [regenerateAI, setRegenerateAI] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
   const [showLoadCourses, setShowLoadCourses] = useState(false);
+  const [gradeFilter, setGradeFilter] = useState("");
+  const [boardFilter, setBoardFilter] = useState("");
 
   // DnD sensors
   const sensors = useSensors(
@@ -2124,6 +2127,14 @@ const CreateCourses = () => {
     );
   }
 
+  const filteredCourses = courses.filter((course) => {
+    const matchesGrade = gradeFilter
+      ? course.grade_id?.toString() === gradeFilter
+      : true;
+    const matchesBoard = boardFilter ? course.board === boardFilter : true;
+    return matchesGrade && matchesBoard;
+  });
+
   // Main courses view
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -2142,23 +2153,84 @@ const CreateCourses = () => {
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Create Courses</h1>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowLoadCourses(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Load from Admin
-          </button>
-          <button
-            onClick={() => setShowCreateCourseModal(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Create Course
-          </button>
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Create Courses</h1>
+            <p className="text-sm text-gray-500">
+              Design and publish your catalog for students.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              className="h-10 gap-2"
+              onClick={() => setShowLoadCourses(true)}
+            >
+              <Download className="w-4 h-4" />
+              Load from Admin
+            </Button>
+            <Button
+              className="h-10 gap-2"
+              onClick={() => setShowCreateCourseModal(true)}
+            >
+              <Plus className="w-4 h-4" />
+              Create Course
+            </Button>
+          </div>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 flex flex-wrap items-center gap-3 shadow-sm">
+          <div className="flex flex-1 flex-wrap gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Grade
+              </span>
+              <select
+                value={gradeFilter}
+                onChange={(e) => setGradeFilter(e.target.value)}
+                className="h-10 w-44 rounded-md border border-gray-200 bg-white px-3 text-sm shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">All grades</option>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((grade) => (
+                  <option key={grade} value={grade.toString()}>
+                    Grade {grade}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Board
+              </span>
+              <select
+                value={boardFilter}
+                onChange={(e) => setBoardFilter(e.target.value)}
+                className="h-10 w-56 rounded-md border border-gray-200 bg-white px-3 text-sm shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">All boards</option>
+                {pakistanBoards.map((board) => (
+                  <option key={board.value} value={board.value}>
+                    {board.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              variant="ghost"
+              className="h-10 text-gray-600 hover:text-gray-900"
+              onClick={() => {
+                setGradeFilter("");
+                setBoardFilter("");
+              }}
+            >
+              Clear filters
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -2171,105 +2243,101 @@ const CreateCourses = () => {
           </div>
         ) : (
           <>
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Course
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Grade
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Board
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {courses.map((course) => (
-                  <tr
-                    key={course.id}
-                    className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() => {
-                      setCourseClickLoading(true);
-                      setSelectedCourse(course);
-                      navigate(`/create-courses/${course.id}`);
-                      setCourseClickLoading(false);
-                    }}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <BookOpen className="w-5 h-5 text-blue-600 mr-3" />
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {course.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {course.description}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Course
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Grade
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Board
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Created
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredCourses.map((course) => (
+                    <tr
+                      key={course.id}
+                      className="hover:bg-gray-50 cursor-pointer"
+                      onClick={() => {
+                        setCourseClickLoading(true);
+                        setSelectedCourse(course);
+                        navigate(`/create-courses/${course.id}`);
+                        setCourseClickLoading(false);
+                      }}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <BookOpen className="w-5 h-5 text-blue-600 mr-3" />
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {course.name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {course.description}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        Grade ID: {course.grade_id}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {pakistanBoards.find((b) => b.value === course.board)
-                        ?.label || course.board}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(course.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedCourse(course);
-                        }}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        <FileText className="w-4 h-4 inline mr-1" />
-                        Manage
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteItem(course.id, "course");
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 className="w-4 h-4 inline mr-1" />
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                          {course.grade_id
+                            ? `Grade ${course.grade_id}`
+                            : "No grade set"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {pakistanBoards.find((b) => b.value === course.board)
+                          ?.label || course.board || "Board not set"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(course.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-            {courses.length === 0 && (
+            {filteredCourses.length === 0 && (
               <div className="text-center py-12">
                 <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No courses yet
+                  {courses.length === 0
+                    ? "No courses yet"
+                    : "No courses match these filters"}
                 </h3>
                 <p className="text-gray-500 mb-4">
-                  Get started by creating your first course
+                  {courses.length === 0
+                    ? "Get started by creating your first course"
+                    : "Try adjusting the filters above to see more courses"}
                 </p>
-                <button
-                  onClick={() => setShowCreateCourseModal(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                >
-                  Create Course
-                </button>
+                {courses.length === 0 ? (
+                  <Button
+                    className="gap-2"
+                    onClick={() => setShowCreateCourseModal(true)}
+                  >
+                    <Plus className="w-4 h-4" />
+                    Create Course
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setGradeFilter("");
+                      setBoardFilter("");
+                    }}
+                  >
+                    Clear filters
+                  </Button>
+                )}
               </div>
             )}
           </>
@@ -2466,14 +2534,6 @@ const CreateCourses = () => {
           </div>
         </div>
       )}
-
-      <Link
-        to="/courses"
-        className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 p-2 rounded-md fixed bottom-4 right-4"
-      >
-        <ArrowLeft className="w-6 h-6" />
-        <span className="text-white">View Courses</span>
-      </Link>
     </div>
   );
 };

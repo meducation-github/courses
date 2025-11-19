@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Courses from "./pages/courses/index.jsx";
 import CreateCourses from "./pages/create-courses/index.jsx";
 import Login from "./pages/auth/Login.jsx";
+import LearningHub from "./pages/learning/index.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -84,6 +85,16 @@ createRoot(document.getElementById("root")).render(
             element={
               <ProtectedRoute>
                 <Courses />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Student-only learning hub */}
+          <Route
+            path="/learning"
+            element={
+              <ProtectedRoute requiredRole="student">
+                <LearningHub />
               </ProtectedRoute>
             }
           />

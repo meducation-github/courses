@@ -1486,14 +1486,6 @@ const Courses = () => {
           ))
         )}
       </div>
-
-      <Link
-        to="/create-courses"
-        className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1 p-2 rounded-md fixed bottom-4 right-4"
-      >
-        <Plus className="w-6 h-6" />
-        <span className="text-white">Manage Courses</span>
-      </Link>
     </div>
   );
 };
