@@ -998,8 +998,6 @@ const CreateCourses = () => {
                   type: "sub-subtopic",
                 })
               }
-              onEdit={() => startEdit(subtopic, "subtopic")}
-              onDelete={() => deleteItem(subtopic.id, "subtopic")}
               renderChildSubtopics={() =>
                 renderSubtopics(topicId, subtopic.id, level + 1)
               }
@@ -1032,8 +1030,6 @@ const CreateCourses = () => {
               isExpanded={expandedTopics[topic.id]}
               onToggleExpand={() => toggleExpand(topic.id, "topic")}
               onAddSubtopic={() => openModal("subtopic", { topicId: topic.id })}
-              onEdit={() => startEdit(topic, "topic")}
-              onDelete={() => deleteItem(topic.id, "topic")}
               renderSubtopics={() => renderSubtopics(topic.id)}
               onView={openViewModal}
             />
@@ -1047,8 +1043,6 @@ const CreateCourses = () => {
   const SortableUnit = ({
     unit,
     onAddTopic,
-    onEdit,
-    onDelete,
     renderTopics,
     onView,
   }) => {
@@ -1072,90 +1066,70 @@ const CreateCourses = () => {
       <div
         ref={setNodeRef}
         style={style}
-        className={`bg-white border border-gray-200 rounded-xl p-6 transition-all duration-200 ${
-          isDragging
-            ? "shadow-2xl scale-105 rotate-1"
-            : "hover:shadow-lg hover:border-green-300 hover:bg-green-50/30"
+        className={`bg-white border border-gray-200 rounded-xl p-5 transition-all ${
+          isDragging ? "ring-2 ring-blue-100" : "hover:bg-gray-50"
         }`}
       >
         {/* Main Unit Content - Clickable */}
         <div className="cursor-pointer" onClick={() => onView(unit, "unit")}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleExpand(unit.id, "unit");
-                }}
-                className="text-green-600 hover:text-green-700 transition-colors p-1 hover:bg-green-100 rounded-lg"
-              >
-                {expandedUnits[unit.id] ? (
-                  <ChevronDown className="w-5 h-5" />
-                ) : (
-                  <ChevronRight className="w-5 h-5" />
-                )}
-              </button>
-              <div
-                {...attributes}
-                {...listeners}
-                className="cursor-grab active:cursor-grabbing p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Drag to reorder"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <GripVertical className="w-4 h-4 text-gray-400" />
-              </div>
-              <div className="p-2 bg-green-100 rounded-lg">
-                <BookOpen className="w-5 h-5 text-green-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                  {unit.title}
-                </h3>
-                {unit.short_description && (
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {unit.short_description}
-                  </p>
-                )}
-              </div>
+          <div className="flex items-start gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleExpand(unit.id, "unit");
+              }}
+              className="rounded-md border border-gray-200 bg-white p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+            >
+              {expandedUnits[unit.id] ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+            <div
+              {...attributes}
+              {...listeners}
+              className="cursor-grab active:cursor-grabbing rounded-md border border-gray-200 bg-white p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+              title="Drag to reorder"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <GripVertical className="w-4 h-4" />
             </div>
+            <div className="mt-0.5 rounded-md bg-gray-100 p-2 text-blue-600">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <div className="flex-1 space-y-1">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {unit.title}
+              </h3>
+              {unit.short_description && (
+                <p className="text-sm leading-relaxed text-gray-600">
+                  {unit.short_description}
+                </p>
+              )}
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => onView(unit, "unit")}
+            >
+              <Eye className="w-4 h-4" />
+            </Button>
           </div>
         </div>
 
         {/* Action Buttons - Only show when expanded */}
         {expandedUnits[unit.id] && (
-          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => onView(unit, "unit")}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-                title="View Description"
-              >
-                <Eye className="w-4 h-4" />
-                View Details
-              </button>
-              <button
-                onClick={() => onEdit(unit, "unit")}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-              >
-                <Edit2 className="w-4 h-4" />
-                Edit
-              </button>
-              <button
-                onClick={() => onDelete(unit.id, "unit")}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete
-              </button>
-            </div>
-            <button
+          <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+            <Button
+              size="sm"
+              className="gap-2"
               onClick={() => onAddTopic("topic", { unitId: unit.id })}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors"
-              title="Add Topic"
             >
               <Plus className="w-4 h-4" />
-              Add Topic
-            </button>
+              Add topic
+            </Button>
           </div>
         )}
 
@@ -1173,8 +1147,6 @@ const CreateCourses = () => {
     isExpanded,
     onToggleExpand,
     onAddSubtopic,
-    onEdit,
-    onDelete,
     renderSubtopics,
     onView,
   }) => {
@@ -1198,97 +1170,70 @@ const CreateCourses = () => {
       <div
         ref={setNodeRef}
         style={style}
-        className={`ml-8 transition-all duration-200 ${
-          isDragging
-            ? "shadow-xl bg-blue-50 scale-105 rotate-1"
-            : "hover:shadow-md"
+        className={`ml-8 rounded-xl border border-gray-200 bg-gray-50/60 p-4 transition-all ${
+          isDragging ? "ring-2 ring-blue-100" : "hover:bg-gray-50"
         }`}
       >
-        <div className="bg-blue-50 rounded-xl p-4 border border-blue-100 hover:bg-blue-100/50 transition-colors">
-          {/* Main Topic Content - Clickable */}
-          <div
-            className="cursor-pointer"
-            onClick={() => onView(topic, "topic")}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleExpand();
-                  }}
-                  className="text-blue-600 hover:text-blue-700 transition-colors p-1 hover:bg-blue-200 rounded-lg"
-                >
-                  {isExpanded ? (
-                    <ChevronDown className="w-4 h-4" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4" />
-                  )}
-                </button>
-                <div
-                  {...attributes}
-                  {...listeners}
-                  className="cursor-grab active:cursor-grabbing p-1.5 hover:bg-blue-200 rounded-lg transition-colors"
-                  title="Drag to reorder"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <GripVertical className="w-3 h-3 text-gray-400" />
-                </div>
-                <div className="p-2 bg-blue-200 rounded-lg">
-                  <List className="w-4 h-4 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900 mb-1">
-                    {topic.title}
-                  </h4>
-                  {topic.short_description && (
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      {topic.short_description}
-                    </p>
-                  )}
-                </div>
-              </div>
+        {/* Main Topic Content - Clickable */}
+        <div className="cursor-pointer" onClick={() => onView(topic, "topic")}>
+          <div className="flex items-start gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleExpand();
+              }}
+              className="rounded-md border border-gray-200 bg-white p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+            >
+              {isExpanded ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+            <div
+              {...attributes}
+              {...listeners}
+              className="cursor-grab active:cursor-grabbing rounded-md border border-gray-200 bg-white p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+              title="Drag to reorder"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <GripVertical className="w-3 h-3" />
             </div>
+            <div className="mt-0.5 rounded-md bg-gray-100 p-2 text-blue-600">
+              <List className="w-4 h-4" />
+            </div>
+            <div className="flex-1 space-y-1">
+              <h4 className="font-medium text-gray-900">{topic.title}</h4>
+              {topic.short_description && (
+                <p className="text-sm leading-relaxed text-gray-600">
+                  {topic.short_description}
+                </p>
+              )}
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => onView(topic, "topic")}
+            >
+              <Eye className="w-4 h-4" />
+            </Button>
           </div>
-
-          {/* Action Buttons - Only show when expanded */}
-          {isExpanded && (
-            <div className="flex items-center justify-between pt-3 border-t border-blue-200">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => onView(topic, "topic")}
-                  className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
-                  title="View Description"
-                >
-                  <Eye className="w-3 h-3" />
-                  View Details
-                </button>
-                <button
-                  onClick={() => onEdit(topic, "topic")}
-                  className="flex items-center gap-2 px-3 py-1.5 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-lg transition-colors"
-                >
-                  <Edit2 className="w-3 h-3" />
-                  Edit
-                </button>
-                <button
-                  onClick={() => onDelete(topic.id, "topic")}
-                  className="flex items-center gap-2 px-3 py-1.5 text-xs text-red-600 hover:text-red-800 hover:bg-red-100 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-3 h-3" />
-                  Delete
-                </button>
-              </div>
-              <button
-                onClick={() => onAddSubtopic("subtopic", { topicId: topic.id })}
-                className="flex items-center gap-2 px-3 py-1.5 text-xs bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors"
-                title="Add Subtopic"
-              >
-                <Plus className="w-3 h-3" />
-                Add Subtopic
-              </button>
-            </div>
-          )}
         </div>
+
+        {/* Action Buttons - Only show when expanded */}
+        {isExpanded && (
+          <div className="flex items-center justify-between border-t border-gray-200 pt-3">
+            <Button
+              size="sm"
+              className="gap-2"
+              onClick={() => onAddSubtopic("subtopic", { topicId: topic.id })}
+            >
+              <Plus className="w-3 h-3" />
+              Add subtopic
+            </Button>
+          </div>
+        )}
 
         {/* Subtopics Section */}
         {isExpanded && <div className="ml-6 mt-3">{renderSubtopics()}</div>}
@@ -1302,8 +1247,6 @@ const CreateCourses = () => {
     parentId,
     level,
     onAddSubSubtopic,
-    onEdit,
-    onDelete,
     renderChildSubtopics,
     onView,
   }) => {
@@ -1333,12 +1276,10 @@ const CreateCourses = () => {
           marginLeft: `${marginLeft}px`,
         }}
         className={`transition-all duration-200 ${
-          isDragging
-            ? "shadow-lg bg-gray-100 scale-105 rotate-1"
-            : "hover:shadow-sm"
+          isDragging ? "ring-2 ring-blue-100" : "hover:bg-gray-50"
         }`}
       >
-        <div className="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:bg-gray-100/70 transition-colors mb-2">
+        <div className="mb-2 rounded-lg border border-gray-200 bg-white p-3">
           {/* Main Subtopic Content - Clickable */}
           <div
             className="cursor-pointer"
@@ -1349,14 +1290,14 @@ const CreateCourses = () => {
                 <div
                   {...attributes}
                   {...listeners}
-                  className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 rounded transition-colors"
+                  className="cursor-grab active:cursor-grabbing rounded-md border border-gray-200 bg-white p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
                   title="Drag to reorder"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <GripVertical className="w-3 h-3 text-gray-400" />
+                  <GripVertical className="w-3 h-3" />
                 </div>
-                <div className="p-1.5 bg-purple-100 rounded-lg">
-                  <Hash className="w-3 h-3 text-purple-600" />
+                <div className="mt-0.5 rounded-md bg-gray-100 px-2 py-1 text-blue-600">
+                  <Hash className="w-3 h-3" />
                 </div>
                 <div className="flex-1">
                   <h5 className="font-medium text-gray-900 text-sm">
@@ -1369,43 +1310,28 @@ const CreateCourses = () => {
                   )}
                 </div>
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => onView(subtopic, "subtopic")}
+              >
+                <Eye className="w-4 h-4" />
+              </Button>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => onView(subtopic, "subtopic")}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded transition-colors"
-                title="View Description"
-              >
-                <Eye className="w-3 h-3" />
-                View
-              </button>
-              <button
-                onClick={() => onEdit(subtopic, "subtopic")}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded transition-colors"
-              >
-                <Edit2 className="w-3 h-3" />
-                Edit
-              </button>
-              <button
-                onClick={() => onDelete(subtopic.id, "subtopic")}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-100 rounded transition-colors"
-              >
-                <Trash2 className="w-3 h-3" />
-                Delete
-              </button>
-            </div>
-            <button
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
               onClick={onAddSubSubtopic}
-              className="flex items-center gap-1 px-2 py-1 text-xs bg-purple-600 text-white hover:bg-purple-700 rounded transition-colors"
-              title="Add Sub-subtopic"
             >
               <Plus className="w-3 h-3" />
-              Add Sub
-            </button>
+              Add child
+            </Button>
           </div>
         </div>
         {renderChildSubtopics()}
@@ -1561,8 +1487,6 @@ const CreateCourses = () => {
                       key={unit.id}
                       unit={unit}
                       onAddTopic={openModal}
-                      onEdit={startEdit}
-                      onDelete={deleteItem}
                       renderTopics={renderTopics}
                       onView={openViewModal}
                     />
@@ -1575,20 +1499,22 @@ const CreateCourses = () => {
 
         {/* Modals */}
         {showUnitModal && (
-          <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-              <div className="flex justify-between items-center mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/5 backdrop-blur-sm px-4">
+            <div className="flex w-full max-w-2xl max-h-[90vh] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                 <h3 className="text-lg font-semibold">Add New Unit</h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                   onClick={() => setShowUnitModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto px-6 py-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Title *
                   </label>
                   <input
@@ -1597,12 +1523,12 @@ const CreateCourses = () => {
                     onChange={(e) =>
                       setUnitForm({ ...unitForm, title: e.target.value })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     placeholder="Enter unit title"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Short Description
                   </label>
                   <textarea
@@ -1613,33 +1539,26 @@ const CreateCourses = () => {
                         short_description: e.target.value,
                       })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     rows="3"
                     placeholder="Brief description"
                   />
                 </div>
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => setShowUnitModal(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={createUnit}
-                    disabled={saving}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {saving ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Creating...
-                      </>
-                    ) : (
-                      "Create Unit"
-                    )}
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-gray-200 bg-white px-6 py-4">
+                <Button variant="ghost" onClick={() => setShowUnitModal(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={createUnit} disabled={saving} className="gap-2">
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Unit"
+                  )}
+                </Button>
               </div>
             </div>
           </div>
@@ -1647,20 +1566,22 @@ const CreateCourses = () => {
 
         {/* Similar modals for Topic and Subtopic */}
         {showTopicModal && (
-          <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 scroll-auto w-full max-w-4xl">
-              <div className="flex justify-between items-center mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/5 backdrop-blur-sm px-4">
+            <div className="flex w-full max-w-2xl max-h-[90vh] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                 <h3 className="text-lg font-semibold">Add New Topic</h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                   onClick={() => setShowTopicModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto px-6 py-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Title *
                   </label>
                   <input
@@ -1669,12 +1590,12 @@ const CreateCourses = () => {
                     onChange={(e) =>
                       setTopicForm({ ...topicForm, title: e.target.value })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     placeholder="Enter topic title"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Short Description
                   </label>
                   <textarea
@@ -1685,58 +1606,53 @@ const CreateCourses = () => {
                         short_description: e.target.value,
                       })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     rows="3"
                     placeholder="Brief description"
                   />
                 </div>
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => setShowTopicModal(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={createTopic}
-                    disabled={saving}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {saving ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Creating...
-                      </>
-                    ) : (
-                      "Create Topic"
-                    )}
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-gray-200 bg-white px-6 py-4">
+                <Button variant="ghost" onClick={() => setShowTopicModal(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={createTopic} disabled={saving} className="gap-2">
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Topic"
+                  )}
+                </Button>
               </div>
             </div>
           </div>
         )}
 
         {showSubtopicModal && (
-          <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 scroll-auto w-full max-w-4xl">
-              <div className="flex justify-between items-center mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/5 backdrop-blur-sm px-4">
+            <div className="flex w-full max-w-2xl max-h-[90vh] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                 <h3 className="text-lg font-semibold">
                   Add New{" "}
                   {modalContext.type === "sub-subtopic"
                     ? "Sub-subtopic"
                     : "Subtopic"}
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                   onClick={() => setShowSubtopicModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto px-6 py-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Title *
                   </label>
                   <input
@@ -1748,12 +1664,12 @@ const CreateCourses = () => {
                         title: e.target.value,
                       })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     placeholder="Enter subtopic title"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Short Description
                   </label>
                   <textarea
@@ -1764,37 +1680,37 @@ const CreateCourses = () => {
                         short_description: e.target.value,
                       })
                     }
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     rows="3"
                     placeholder="Brief description"
                   />
                 </div>
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => setShowSubtopicModal(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={createSubtopic}
-                    disabled={saving}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {saving ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Creating...
-                      </>
-                    ) : (
-                      `Create ${
-                        modalContext.type === "sub-subtopic"
-                          ? "Sub-subtopic"
-                          : "Subtopic"
-                      }`
-                    )}
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-gray-200 bg-white px-6 py-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowSubtopicModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={createSubtopic}
+                  disabled={saving}
+                  className="gap-2"
+                >
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    `Create ${
+                      modalContext.type === "sub-subtopic"
+                        ? "Sub-subtopic"
+                        : "Subtopic"
+                    }`
+                  )}
+                </Button>
               </div>
             </div>
           </div>
@@ -1802,24 +1718,26 @@ const CreateCourses = () => {
 
         {/* Edit Modal */}
         {editingItem && (
-          <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/5 backdrop-blur-sm px-4">
+            <div className="flex w-full max-w-3xl max-h-[90vh] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                 <h3 className="text-lg font-semibold">Edit {editingType}</h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                   onClick={() => {
                     setEditingItem(null);
                     setEditingType(null);
                     setRegenerateAI(false);
                   }}
-                  className="text-gray-400 hover:text-gray-600"
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto px-6 py-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Title *
                   </label>
                   <input
@@ -1843,12 +1761,12 @@ const CreateCourses = () => {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     placeholder="Enter title"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Short Description
                   </label>
                   <textarea
@@ -1877,13 +1795,13 @@ const CreateCourses = () => {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     rows="3"
                     placeholder="Brief description"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
                     Main Description
                   </label>
                   <SimpleRichTextEditor
@@ -1915,59 +1833,50 @@ const CreateCourses = () => {
                     placeholder="Write a detailed description with rich formatting..."
                   />
                 </div>
-                <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
                   <input
                     type="checkbox"
                     id="regenerateAI"
                     checked={regenerateAI}
                     onChange={(e) => setRegenerateAI(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
                   />
-                  <label
-                    htmlFor="regenerateAI"
-                    className="text-sm text-gray-700"
-                  >
-                    <div className="flex items-center gap-2">
+                  <div className="space-y-1">
+                    <span className="flex items-center gap-2 text-sm font-medium text-gray-900">
                       <Sparkles className="w-4 h-4 text-blue-600" />
                       Regenerate AI description
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      This will overwrite the current main description with a
-                      new AI-generated one. Content is stored as clean markdown.
+                    </span>
+                    <p className="text-xs text-gray-600">
+                      This will overwrite the current main description with a new AI-generated one.
                     </p>
-                  </label>
+                  </div>
                 </div>
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => {
-                      setEditingItem(null);
-                      setEditingType(null);
-                      setRegenerateAI(false);
-                    }}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={saveEdit}
-                    disabled={saving || (regenerateAI && generatingAI)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {saving ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        {regenerateAI && generatingAI
-                          ? "Generating AI..."
-                          : "Saving..."}
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4" />
-                        Save Changes
-                      </>
-                    )}
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-gray-200 bg-white px-6 py-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setEditingItem(null);
+                    setEditingType(null);
+                    setRegenerateAI(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={saveEdit}
+                  disabled={saving || (regenerateAI && generatingAI)}
+                  className="gap-2"
+                >
+                  {saving ? (
+                    regenerateAI && generatingAI ? "Generating..." : "Saving..."
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      Save Changes
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </div>
@@ -1975,38 +1884,37 @@ const CreateCourses = () => {
 
         {/* Delete Confirmation Modal */}
         {deleteConfirmation && (
-          <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 scroll-auto w-full max-w-4xl">
-              <div className="flex justify-between items-center mb-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/5 backdrop-blur-sm px-4">
+            <div className="flex w-full max-w-md flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                 <h3 className="text-lg font-semibold text-red-600">
                   Confirm Delete
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                   onClick={() => setDeleteConfirmation(null)}
-                  className="text-gray-400 hover:text-gray-600"
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-              <div className="space-y-4">
-                <p className="text-gray-700">
-                  Are you sure you want to delete this {deleteConfirmation.type}
-                  ? This action cannot be undone.
+              <div className="space-y-3 px-6 py-4 text-sm text-gray-700">
+                <p>
+                  Are you sure you want to delete this {deleteConfirmation.type}? This action cannot be undone.
                 </p>
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => setDeleteConfirmation(null)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={confirmDelete}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-gray-200 bg-white px-6 py-4">
+                <Button variant="ghost" onClick={() => setDeleteConfirmation(null)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="bg-red-600 text-white hover:bg-red-700"
+                  onClick={confirmDelete}
+                >
+                  Delete
+                </Button>
               </div>
             </div>
           </div>
@@ -2014,9 +1922,9 @@ const CreateCourses = () => {
 
         {/* View Modal */}
         {showViewModal && viewingItem && (
-          <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/5 backdrop-blur-sm px-4">
+            <div className="flex w-full max-w-4xl max-h-[90vh] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900">
                     {viewingType === "unit"
@@ -2032,47 +1940,23 @@ const CreateCourses = () => {
                     {viewingType === "subtopic" && "Topic Subtopic"}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => {
-                      setShowViewModal(false);
-                      setViewingItem(null);
-                      setViewingType(null);
-                      startEdit(viewingItem, viewingType);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowViewModal(false);
-                      setViewingItem(null);
-                      setViewingType(null);
-                      deleteItem(viewingItem.id, viewingType);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowViewModal(false);
-                      setViewingItem(null);
-                      setViewingType(null);
-                    }}
-                    className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => {
+                    setShowViewModal(false);
+                    setViewingItem(null);
+                    setViewingType(null);
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-6 overflow-y-auto px-6 py-4">
                 {viewingItem.short_description && (
-                  <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
                     <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-gray-600" />
                       Short Description
@@ -2084,15 +1968,13 @@ const CreateCourses = () => {
                 )}
 
                 {viewingItem.main_description ? (
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
+                  <div className="rounded-xl border border-gray-200 bg-white p-6">
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-blue-600" />
                       Main Description
                     </h4>
                     <div className="prose prose-sm max-w-none">
-                      <MarkdownRenderer
-                        content={viewingItem.main_description}
-                      />
+                      <MarkdownRenderer content={viewingItem.main_description} />
                     </div>
                   </div>
                 ) : (
@@ -2102,23 +1984,57 @@ const CreateCourses = () => {
                       No Main Description
                     </h4>
                     <p className="text-gray-600">
-                      This {viewingType} doesn't have a detailed description
-                      yet.
+                      This {viewingType} doesn't have a detailed description yet.
                     </p>
-                    <button
+                    <Button
+                      className="mt-4 gap-2"
                       onClick={() => {
                         setShowViewModal(false);
                         setViewingItem(null);
                         setViewingType(null);
                         startEdit(viewingItem, viewingType);
                       }}
-                      className="mt-4 flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors mx-auto"
                     >
                       <Edit2 className="w-4 h-4" />
                       Add Description
-                    </button>
+                    </Button>
                   </div>
                 )}
+              </div>
+              <div className="flex items-center justify-end gap-2 border-t border-gray-200 bg-white px-6 py-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setShowViewModal(false);
+                    setViewingItem(null);
+                    setViewingType(null);
+                  }}
+                >
+                  Close
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowViewModal(false);
+                    startEdit(viewingItem, viewingType);
+                  }}
+                >
+                  <Edit2 className="w-4 h-4" />
+                  Edit
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="bg-red-600 text-white hover:bg-red-700"
+                  onClick={() => {
+                    setShowViewModal(false);
+                    setViewingItem(null);
+                    setViewingType(null);
+                    deleteItem(viewingItem.id, viewingType);
+                  }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </Button>
               </div>
             </div>
           </div>
@@ -2470,38 +2386,37 @@ const CreateCourses = () => {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmation && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 scroll-auto w-full max-w-4xl">
-            <div className="flex justify-between items-center mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/5 backdrop-blur-sm px-4">
+          <div className="flex w-full max-w-md flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+            <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
               <h3 className="text-lg font-semibold text-red-600">
                 Confirm Delete
               </h3>
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
                 onClick={() => setDeleteConfirmation(null)}
-                className="text-gray-400 hover:text-gray-600"
               >
-                <X className="w-5 h-5" />
-              </button>
+                <X className="w-4 h-4" />
+              </Button>
             </div>
-            <div className="space-y-4">
-              <p className="text-gray-700">
-                Are you sure you want to delete this {deleteConfirmation.type}?
-                This action cannot be undone.
+            <div className="space-y-3 px-6 py-4 text-sm text-gray-700">
+              <p>
+                Are you sure you want to delete this {deleteConfirmation.type}? This action cannot be undone.
               </p>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setDeleteConfirmation(null)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 border-t border-gray-200 bg-white px-6 py-4">
+              <Button variant="ghost" onClick={() => setDeleteConfirmation(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="bg-red-600 text-white hover:bg-red-700"
+                onClick={confirmDelete}
+              >
+                Delete
+              </Button>
             </div>
           </div>
         </div>
